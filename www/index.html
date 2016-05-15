@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"></meta>
+  <title>Document</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+  <script src="./js/main.js"></script>
+  <script>
+    var app = Elm.fullscreen(
+      Elm.Main
+      , {
+        fromJS: {
+          currentInput: "AAAAAAAA"
+          , tasks: []
+          , nextId: 0
+        }
+      }
+    );
+
+
+    var onDeviceReady = function() {
+      app.ports.toJS.subscribe(function(model) {
+        window.localStorage.setItem('oneToDoApp', JSON.stringify(model));
+      });
+
+      if (window.localStorage.getItem('oneToDoApp')) {
+        app.ports.fromJS.send(JSON.parse(window.localStorage.getItem('oneToDoApp')));
+      }
+    };
+
+    document.body.onload = onDeviceReady;
+
+  </script>
+  <!-- <script src="http://192.168.1.105:1337/vorlon.js"></script> -->
+</body>
+</html>

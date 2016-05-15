@@ -1,0 +1,169 @@
+body {
+  margin: 0;
+  padding-bottom: 10vw;
+  display: block;
+  font-size: 7vw;
+  font-family: Arial;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /*height: 93vw;*/
+}
+
+button {
+  font-size: 3vw;
+  color: white;
+  background-color: #81D4FA;
+  border: none;
+}
+
+input {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  width: calc(80% - 20px);
+  top: 0;
+  border: none;
+  border-left: 20px solid #81D4FA;
+  font-size: 5vw;
+}
+
+.new-task {
+  position: fixed;
+  bottom: 0;
+  height: 10vw;
+  width: 100vw;
+  background-color: white;
+  border-top: 1px solid white;
+  z-index: 1;
+}
+
+.new-task__input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 80%;
+  /*font-size: 7vw;*/
+}
+
+.new-task__button {
+  height: 100%;
+  width: 19.7%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 3vw;
+}
+
+.line {
+  height: 15vw;
+  line-height: 15vw;
+  position: relative;
+  width: 100vw;
+}
+
+.subtask {
+  padding-left: 15%;
+  width: 85%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: absolute;
+  line-height: 15vw;
+  font-size: 5vw;
+  transition: all 300ms ease;
+  background-color: white;
+}
+
+.subtask__list {
+  position: relative;
+  overflow: hidden;
+  transition: all 300ms ease;
+}
+
+.subtask__input {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  width: 80%;
+  top: 0;
+  font-size: 5vw;
+}
+
+.subtask__button {
+  width: 19.7%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 3vw;
+}
+
+.subtask__checked {
+  text-decoration: line-through;
+  background-color: rgba(129, 212, 250, 0.5);
+  z-index: 1;
+}
+
+.subTask__inWBtn {
+  position: absolute;
+  bottom: 0;
+}
+
+.task__list {
+  /*max-height: 1000px;
+  transition: height 3000ms ease;*/
+  /*overflow: hidden;*/
+}
+/*
+.task__list:empty {
+  max-height: 0px;
+}*/
+
+.task__line {
+  padding-left: 5%;
+  position: relative;
+  width: 95%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 300ms ease;
+}
+
+.task__line_open {
+  color: white;
+}
+
+.task__line_open > .task__loader,
+.task__line_open > .dlt-btn {
+  opacity: 1;
+  height: 100%!important;
+}
+
+.task__loader {
+  position: absolute;
+  width: 100%;
+  height: 0%;
+  left: 0;
+  bottom: 0;
+  background-color: #81D4FA;
+  opacity: 0.5;
+  transition: all 300ms ease;
+  z-index: -1;
+}
+
+.dlt-btn {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: 60%;
+  width: 19.7%;
+  text-align: center;
+  background-color: #81D4FA;
+  border-left: 1px solid;
+  height: 0;
+  opacity: 0;
+  transition: all 300ms ease;
+  color: white;
+}
