@@ -1,0 +1,23 @@
+{
+  "name": "elm-cordova-todo",
+  "version": "1.0.0",
+  "description": "A little ToDo app, written with elm and cordova. Just for fun/training/fun training.",
+  "main": "index.js",
+  "scripts": {
+    "start": "elm-make Main.elm --output=main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/squoddam/elm-cordova-todo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/squoddam/elm-cordova-todo/issues"
+  },
+  "homepage": "https://github.com/squoddam/elm-cordova-todo#readme",
+  "dependencies": {
+    "elm": "^0.17.0"
+  }
+}

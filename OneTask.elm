@@ -1,4 +1,4 @@
-module OneTask (..) where
+module OneTask exposing (..)
 
 import Html
 import Html.Attributes as Attr
