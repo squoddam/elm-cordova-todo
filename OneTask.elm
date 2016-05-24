@@ -40,8 +40,8 @@ initialSubTasks =
     }
   ]
 
-initialModel : Model
-initialModel =
+init : Model
+init =
   {
     text = "",
     subTasks = [],
@@ -52,7 +52,7 @@ initialModel =
 
 -- UPDATE
 
-type Action
+type Msg
   = ToggleFolding
   | SubTaskInputChange String
   | AddSubTask
@@ -60,9 +60,9 @@ type Action
   | DeleteTask
   | NoOp
 
-update : Action -> Model -> Model
-update action model =
-  case action of
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
     ToggleFolding ->
       { model | showSubTasks = not model.showSubTasks}
 
@@ -109,17 +109,17 @@ update action model =
 
 -- VIEW
 
-deleteButton : Signal.Address Action -> Model -> Html.Html
-deleteButton address model =
+deleteButton : Model -> Html.Html Msg
+deleteButton model =
   Html.div
     [ Attr.class "dlt-btn"
-    , Events.onClick address DeleteTask ]
+    , Events.onClick DeleteTask ]
     [
       Html.text "Delete"
     ]
 
-view : Signal.Address Action -> Model -> Html.Html
-view address model =
+view : Model -> Html.Html Msg
+view model =
   let
     taskClass =
       if
@@ -139,7 +139,7 @@ view address model =
 
     taskText =
       Html.div
-        [Events.onClick address ToggleFolding, Attr.class taskClass]
+        [Events.onClick ToggleFolding, Attr.class taskClass]
         [
           Html.text (model.text)
         , Html.div
@@ -147,7 +147,7 @@ view address model =
           , Attr.style [("height", loaderHeight ++ "%")]
           , Attr.attribute "data-h" loaderHeight
           ] []
-        , deleteButton address model
+        , deleteButton model
         ]
 
     subTasksInputWButton =
@@ -157,14 +157,12 @@ view address model =
               [
                 Html.input
                 [
-                  Events.on
-                    "change"
-                    Events.targetValue
-                    (\input -> Signal.message address (SubTaskInputChange input))
+                  Events.onInput
+                    (\input -> (SubTaskInputChange input))
                   , Attr.value model.currentSubTaskInput
                   , Attr.class "subtask__input"
                 ] [],
-                Html.button [ Events.onClick address AddSubTask
+                Html.button [ Events.onClick AddSubTask
                             , Attr.class "subtask__button"  ] [ Html.text "add subtask"]
               ]
         -- else Html.text ""
@@ -197,7 +195,7 @@ view address model =
             Attr.class subTaskClass
           -- , Attr.attribute "data-h" (toString ( fromMaybe (get i (fromList subHeightsArray))))
           , Attr.style [("top", (getIntToString (get i subHeightsArray)) ++ "vw")]
-          , Events.onClick address (ToggleSubTask subT.id)
+          , Events.onClick (ToggleSubTask subT.id)
           ]
           [ Html.text subT.text ]
 
