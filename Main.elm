@@ -3,120 +3,115 @@ module Main exposing (..)
 import Html
 import Html.Events as Events
 import Html.Attributes as Attr
+import Html.App
 import List
 import String
 
-import OneTask exposing (..)
+import Todo exposing (..)
+
+main =
+  Html.App.program {
+    init = init,
+    view = view,
+    update = update,
+    subscriptions = \_ -> Sub.none
+  }
+
 -- MODEL
 
 type alias Model =
   {
     currentInput : String,
-    tasks : List (ID, OneTask.Model),
+    todos : List (ID, Todo.Model),
     nextId : ID
   }
 
 type alias ID = Int
 
-initialModel : Model
-initialModel =
-  {
-    currentInput = "",
-    tasks = [],
-    nextId = 0
-  }
+init : (Model, Cmd Msg)
+init =
+  (Model "" [] 0, Cmd.none)
 
-oneTaskInitialModel : OneTask.Model
-oneTaskInitialModel =
-  OneTask.initialModel
+oneTodoInitialModel : Todo.Model
+oneTodoInitialModel =
+  Todo.init
 
-type Action
+type Msg
   = InputChange String
-  | GetTasks Model
-  | NewTask
-  | ModifyTask ID OneTask.Action
+  | GetTodos Model
+  | NewTodo
+  | ModifyTodo ID Todo.Msg
   | NoOp
 
 -- UPDATE
-update : Action -> Model -> Model
-update action model =
-  case action of
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+  case msg of
     InputChange input ->
-      {model | currentInput = input}
+      ({model | currentInput = input}, Cmd.none)
 
-    NewTask ->
+    NewTodo ->
       if (String.length model.currentInput) > 0
-        then {
+        then ({
               model |
-                tasks = model.tasks ++ [(model.nextId, { oneTaskInitialModel | text = model.currentInput })]
+                todos = model.todos ++ [(model.nextId, { oneTodoInitialModel | text = model.currentInput })]
                 , currentInput = ""
                 , nextId = model.nextId + 1
-            }
-        else model
+            }, Cmd.none)
+        else (model, Cmd.none)
 
-    ModifyTask id taskAction ->
+    ModifyTodo id todoMsg ->
       let
-        updateTask (taskId, taskModel) =
-          if taskId == id
-            then (taskId, OneTask.update taskAction taskModel)
-            else (taskId, taskModel)
-        newTasks =
-          List.map updateTask model.tasks
+        updateTodo (todoId, todoModel) =
+          if todoId == id
+            then (todoId, Todo.update todoMsg todoModel)
+            else (todoId, todoModel)
+        newTodos =
+          List.map updateTodo model.todos
       in
-        { model | tasks = List.filter (\(_, task) -> (String.length task.text) > 0) newTasks }
+        ({ model | todos = List.filter (\(_, todo) -> (String.length todo.text) > 0) newTodos }, Cmd.none)
 
-    GetTasks savedModel ->
-      savedModel
+    GetTodos savedModel ->
+      (savedModel, Cmd.none)
 
     NoOp ->
-      model
-
-tasksMail : Signal.Mailbox Action
-tasksMail =
-  Signal.mailbox NoOp
-
-modelSignal : Signal Model
-modelSignal =
-  Signal.foldp update initialModel (Signal.merge tasksMail.signal getTasks)
+      (model, Cmd.none)
 
 --VIEW
 
-view : Signal.Address Action -> Model -> Html.Html
-view address model =
+view : Model -> Html.Html Msg
+view model =
   let
-    tasks = List.map (taskView address) model.tasks
-    newTaskInput = Html.input
-                    [ Events.on "change" Events.targetValue (\input -> Signal.message address (InputChange input))
-                    , Attr.class "new-task__input"
+    todos = List.map todoView model.todos
+    newTodoInput = Html.input
+                    [ Events.onInput InputChange
+                    , Attr.class "new-todo__input"
                     , Attr.value model.currentInput
                     ] []
-    newTaskButton = Html.button [ Events.onClick address NewTask
-                                , Attr.class "new-task__button"  ] [ Html.text "add task" ]
-    newTaskControl = Html.div [ Attr.class "new-task" ] [newTaskInput, newTaskButton]
+    newTodoButton = Html.button [ Events.onClick NewTodo
+                                , Attr.class "new-todo__button"  ] [ Html.text "add todo" ]
+    newTodoControl = Html.div [ Attr.class "new-todo" ] [newTodoInput, newTodoButton]
   in
     Html.div []
       [
         Html.div
-        [ Attr.class "task__list"
-        -- , Attr.style [("height", (toString ((List.length model.tasks) * 10)) ++ "vh")]
-        ] tasks
-      , newTaskControl
+        [ Attr.class "todo__list"
+        -- , Attr.style [("height", (toString ((List.length model.todos) * 10)) ++ "vh")]
+        ]
+        todos
+      , newTodoControl
       ]
 
-taskView : Signal.Address Action -> (ID, OneTask.Model) -> Html.Html
-taskView address (id, taskModel) =
-  OneTask.view (Signal.forwardTo address (ModifyTask id)) taskModel
+todoView : (ID, Todo.Model) -> Html.Html Msg
+todoView (id, todoModel) =
+  Html.App.map (ModifyTodo id) (Todo.view todoModel)
 
-main : Signal Html.Html
-main =
-  Signal.map (view tasksMail.address) modelSignal
-
-getTasks : Signal Action
-getTasks =
-  Signal.map (\model -> GetTasks model) fromJS
-
-port fromJS : Signal Model
-
-port toJS : Signal Model
-port toJS =
-  modelSignal
+-- getTodos : Signal Msg
+-- getTodos =
+--   Signal.map (\model -> GetTodos model) fromJS
+--
+-- port fromJS : Signal Model
+--
+-- port toJS : Signal Model
+-- port toJS =
+--   modelSignal

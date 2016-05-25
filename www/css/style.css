@@ -29,7 +29,7 @@ input {
   font-size: 5vw;
 }
 
-.new-task {
+.new-todo {
   position: fixed;
   bottom: 0;
   height: 10vw;
@@ -39,7 +39,7 @@ input {
   z-index: 1;
 }
 
-.new-task__input {
+.new-todo__input {
   position: absolute;
   top: 0;
   left: 0;
@@ -48,7 +48,7 @@ input {
   /*font-size: 7vw;*/
 }
 
-.new-task__button {
+.new-todo__button {
   height: 100%;
   width: 19.7%;
   position: absolute;
@@ -64,7 +64,7 @@ input {
   width: 100vw;
 }
 
-.subtask {
+.subtodo {
   padding-left: 15%;
   width: 85%;
   overflow: hidden;
@@ -76,13 +76,13 @@ input {
   background-color: white;
 }
 
-.subtask__list {
+.subtodo__list {
   position: relative;
   overflow: hidden;
   transition: all 300ms ease;
 }
 
-.subtask__input {
+.subtodo__input {
   height: 100%;
   left: 0;
   position: absolute;
@@ -91,7 +91,7 @@ input {
   font-size: 5vw;
 }
 
-.subtask__button {
+.subtodo__button {
   width: 19.7%;
   height: 100%;
   position: absolute;
@@ -100,28 +100,28 @@ input {
   font-size: 3vw;
 }
 
-.subtask__checked {
+.subtodo__checked {
   text-decoration: line-through;
   background-color: rgba(129, 212, 250, 0.5);
   z-index: 1;
 }
 
-.subTask__inWBtn {
+.subTodo__inWBtn {
   position: absolute;
   bottom: 0;
 }
 
-.task__list {
+.todo__list {
   /*max-height: 1000px;
   transition: height 3000ms ease;*/
   /*overflow: hidden;*/
 }
 /*
-.task__list:empty {
+.todo__list:empty {
   max-height: 0px;
 }*/
 
-.task__line {
+.todo__line {
   padding-left: 5%;
   position: relative;
   width: 95%;
@@ -131,17 +131,17 @@ input {
   transition: all 300ms ease;
 }
 
-.task__line_open {
+.todo__line_open {
   color: white;
 }
 
-.task__line_open > .task__loader,
-.task__line_open > .dlt-btn {
+.todo__line_open > .todo__loader,
+.todo__line_open > .dlt-btn {
   opacity: 1;
   height: 100%!important;
 }
 
-.task__loader {
+.todo__loader {
   position: absolute;
   width: 100%;
   height: 0%;

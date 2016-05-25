@@ -9,26 +9,25 @@
 <body>
   <script src="./js/main.js"></script>
   <script>
-    var app = Elm.fullscreen(
-      Elm.Main
-      , {
-        fromJS: {
-          currentInput: "AAAAAAAA"
-          , tasks: []
-          , nextId: 0
-        }
-      }
+    var app = Elm.Main.fullscreen(
+      // {
+      //   fromJS: {
+      //     currentInput: "AAAAAAAA"
+      //     , tasks: []
+      //     , nextId: 0
+      //   }
+      // }
     );
 
 
     var onDeviceReady = function() {
-      app.ports.toJS.subscribe(function(model) {
-        window.localStorage.setItem('oneToDoApp', JSON.stringify(model));
-      });
-
-      if (window.localStorage.getItem('oneToDoApp')) {
-        app.ports.fromJS.send(JSON.parse(window.localStorage.getItem('oneToDoApp')));
-      }
+      // app.ports.toJS.subscribe(function(model) {
+      //   window.localStorage.setItem('oneToDoApp', JSON.stringify(model));
+      // });
+      //
+      // if (window.localStorage.getItem('oneToDoApp')) {
+      //   app.ports.fromJS.send(JSON.parse(window.localStorage.getItem('oneToDoApp')));
+      // }
     };
 
     document.body.onload = onDeviceReady;

@@ -4,7 +4,7 @@
   "description": "A little ToDo app, written with elm and cordova. Just for fun/training/fun training.",
   "main": "index.js",
   "scripts": {
-    "start": "elm-make Main.elm --output=main.js",
+    "start": "elm-make Main.elm --output=./www/js/main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
