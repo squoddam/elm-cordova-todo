@@ -7503,6 +7503,106 @@ var _user$project$Todo$view = function (model) {
 };
 
 var _user$project$Main$oneTodoInitialModel = _user$project$Todo$init;
+var _user$project$Main$getTodosFromJS = _elm_lang$core$Native_Platform.incomingPort(
+	'getTodosFromJS',
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		A2(_elm_lang$core$Json_Decode_ops[':='], 'currentInput', _elm_lang$core$Json_Decode$string),
+		function (currentInput) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				A2(
+					_elm_lang$core$Json_Decode_ops[':='],
+					'todos',
+					_elm_lang$core$Json_Decode$list(
+						A3(
+							_elm_lang$core$Json_Decode$tuple2,
+							F2(
+								function (x1, x2) {
+									return {ctor: '_Tuple2', _0: x1, _1: x2};
+								}),
+							_elm_lang$core$Json_Decode$int,
+							A2(
+								_elm_lang$core$Json_Decode$andThen,
+								A2(_elm_lang$core$Json_Decode_ops[':='], 'text', _elm_lang$core$Json_Decode$string),
+								function (text) {
+									return A2(
+										_elm_lang$core$Json_Decode$andThen,
+										A2(
+											_elm_lang$core$Json_Decode_ops[':='],
+											'subTodos',
+											_elm_lang$core$Json_Decode$list(
+												A2(
+													_elm_lang$core$Json_Decode$andThen,
+													A2(_elm_lang$core$Json_Decode_ops[':='], 'id', _elm_lang$core$Json_Decode$int),
+													function (id) {
+														return A2(
+															_elm_lang$core$Json_Decode$andThen,
+															A2(_elm_lang$core$Json_Decode_ops[':='], 'text', _elm_lang$core$Json_Decode$string),
+															function (text) {
+																return A2(
+																	_elm_lang$core$Json_Decode$andThen,
+																	A2(_elm_lang$core$Json_Decode_ops[':='], 'checked', _elm_lang$core$Json_Decode$bool),
+																	function (checked) {
+																		return _elm_lang$core$Json_Decode$succeed(
+																			{id: id, text: text, checked: checked});
+																	});
+															});
+													}))),
+										function (subTodos) {
+											return A2(
+												_elm_lang$core$Json_Decode$andThen,
+												A2(_elm_lang$core$Json_Decode_ops[':='], 'showSubTodos', _elm_lang$core$Json_Decode$bool),
+												function (showSubTodos) {
+													return A2(
+														_elm_lang$core$Json_Decode$andThen,
+														A2(_elm_lang$core$Json_Decode_ops[':='], 'currentSubTodoInput', _elm_lang$core$Json_Decode$string),
+														function (currentSubTodoInput) {
+															return A2(
+																_elm_lang$core$Json_Decode$andThen,
+																A2(_elm_lang$core$Json_Decode_ops[':='], 'lastSTID', _elm_lang$core$Json_Decode$int),
+																function (lastSTID) {
+																	return _elm_lang$core$Json_Decode$succeed(
+																		{text: text, subTodos: subTodos, showSubTodos: showSubTodos, currentSubTodoInput: currentSubTodoInput, lastSTID: lastSTID});
+																});
+														});
+												});
+										});
+								})))),
+				function (todos) {
+					return A2(
+						_elm_lang$core$Json_Decode$andThen,
+						A2(_elm_lang$core$Json_Decode_ops[':='], 'nextId', _elm_lang$core$Json_Decode$int),
+						function (nextId) {
+							return _elm_lang$core$Json_Decode$succeed(
+								{currentInput: currentInput, todos: todos, nextId: nextId});
+						});
+				});
+		}));
+var _user$project$Main$setTodosInJS = _elm_lang$core$Native_Platform.outgoingPort(
+	'setTodosInJS',
+	function (v) {
+		return {
+			currentInput: v.currentInput,
+			todos: _elm_lang$core$Native_List.toArray(v.todos).map(
+				function (v) {
+					return [
+						v._0,
+						{
+						text: v._1.text,
+						subTodos: _elm_lang$core$Native_List.toArray(v._1.subTodos).map(
+							function (v) {
+								return {id: v.id, text: v.text, checked: v.checked};
+							}),
+						showSubTodos: v._1.showSubTodos,
+						currentSubTodoInput: v._1.currentSubTodoInput,
+						lastSTID: v._1.lastSTID
+					}
+					];
+				}),
+			nextId: v.nextId
+		};
+	});
 var _user$project$Main$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
@@ -7516,11 +7616,10 @@ var _user$project$Main$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'NewTodo':
-				return (_elm_lang$core$Native_Utils.cmp(
+				if (_elm_lang$core$Native_Utils.cmp(
 					_elm_lang$core$String$length(model.currentInput),
-					0) > 0) ? {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
+					0) > 0) {
+					var newModel = _elm_lang$core$Native_Utils.update(
 						model,
 						{
 							todos: A2(
@@ -7538,9 +7637,19 @@ var _user$project$Main$update = F2(
 									])),
 							currentInput: '',
 							nextId: model.nextId + 1
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				} : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+						});
+					return {
+						ctor: '_Tuple2',
+						_0: newModel,
+						_1: _user$project$Main$setTodosInJS(newModel)
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: model,
+						_1: _user$project$Main$setTodosInJS(model)
+					};
+				}
 			case 'ModifyTodo':
 				var updateTodo = function (_p1) {
 					var _p2 = _p1;
@@ -7553,22 +7662,23 @@ var _user$project$Main$update = F2(
 					} : {ctor: '_Tuple2', _0: _p3, _1: _p4};
 				};
 				var newTodos = A2(_elm_lang$core$List$map, updateTodo, model.todos);
+				var newModel = _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						todos: A2(
+							_elm_lang$core$List$filter,
+							function (_p5) {
+								var _p6 = _p5;
+								return _elm_lang$core$Native_Utils.cmp(
+									_elm_lang$core$String$length(_p6._1.text),
+									0) > 0;
+							},
+							newTodos)
+					});
 				return {
 					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							todos: A2(
-								_elm_lang$core$List$filter,
-								function (_p5) {
-									var _p6 = _p5;
-									return _elm_lang$core$Native_Utils.cmp(
-										_elm_lang$core$String$length(_p6._1.text),
-										0) > 0;
-								},
-								newTodos)
-						}),
-					_1: _elm_lang$core$Platform_Cmd$none
+					_0: newModel,
+					_1: _user$project$Main$setTodosInJS(newModel)
 				};
 			case 'GetTodos':
 				return {ctor: '_Tuple2', _0: _p0._0, _1: _elm_lang$core$Platform_Cmd$none};
@@ -7605,6 +7715,9 @@ var _user$project$Main$todoView = function (_p7) {
 var _user$project$Main$NewTodo = {ctor: 'NewTodo'};
 var _user$project$Main$GetTodos = function (a) {
 	return {ctor: 'GetTodos', _0: a};
+};
+var _user$project$Main$subscriptions = function (model) {
+	return _user$project$Main$getTodosFromJS(_user$project$Main$GetTodos);
 };
 var _user$project$Main$InputChange = function (a) {
 	return {ctor: 'InputChange', _0: a};
@@ -7658,14 +7771,7 @@ var _user$project$Main$view = function (model) {
 };
 var _user$project$Main$main = {
 	main: _elm_lang$html$Html_App$program(
-		{
-			init: _user$project$Main$init,
-			view: _user$project$Main$view,
-			update: _user$project$Main$update,
-			subscriptions: function (_p9) {
-				return _elm_lang$core$Platform_Sub$none;
-			}
-		})
+		{init: _user$project$Main$init, view: _user$project$Main$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})
 };
 
 var Elm = {};

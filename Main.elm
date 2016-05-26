@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Html
 import Html.Events as Events
@@ -14,7 +14,7 @@ main =
     init = init,
     view = view,
     update = update,
-    subscriptions = \_ -> Sub.none
+    subscriptions = subscriptions
   }
 
 -- MODEL
@@ -52,13 +52,18 @@ update msg model =
 
     NewTodo ->
       if (String.length model.currentInput) > 0
-        then ({
-              model |
-                todos = model.todos ++ [(model.nextId, { oneTodoInitialModel | text = model.currentInput })]
-                , currentInput = ""
-                , nextId = model.nextId + 1
-            }, Cmd.none)
-        else (model, Cmd.none)
+        then
+          let
+            newModel =
+              {
+                model |
+                  todos = model.todos ++ [(model.nextId, { oneTodoInitialModel | text = model.currentInput })]
+                  , currentInput = ""
+                  , nextId = model.nextId + 1
+              }
+          in
+            (newModel, setTodosInJS newModel)
+        else (model, setTodosInJS model)
 
     ModifyTodo id todoMsg ->
       let
@@ -68,8 +73,10 @@ update msg model =
             else (todoId, todoModel)
         newTodos =
           List.map updateTodo model.todos
+        newModel =
+          { model | todos = List.filter (\(_, todo) -> (String.length todo.text) > 0) newTodos }
       in
-        ({ model | todos = List.filter (\(_, todo) -> (String.length todo.text) > 0) newTodos }, Cmd.none)
+        (newModel, setTodosInJS newModel)
 
     GetTodos savedModel ->
       (savedModel, Cmd.none)
@@ -106,12 +113,9 @@ todoView : (ID, Todo.Model) -> Html.Html Msg
 todoView (id, todoModel) =
   Html.App.map (ModifyTodo id) (Todo.view todoModel)
 
--- getTodos : Signal Msg
--- getTodos =
---   Signal.map (\model -> GetTodos model) fromJS
---
--- port fromJS : Signal Model
---
--- port toJS : Signal Model
--- port toJS =
---   modelSignal
+port getTodosFromJS : (Model -> msg) -> Sub msg
+port setTodosInJS : Model -> Cmd msg
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  getTodosFromJS GetTodos

@@ -9,30 +9,23 @@
 <body>
   <script src="./js/main.js"></script>
   <script>
-    var app = Elm.Main.fullscreen(
-      // {
-      //   fromJS: {
-      //     currentInput: "AAAAAAAA"
-      //     , tasks: []
-      //     , nextId: 0
-      //   }
-      // }
-    );
-
+    var app = Elm.Main.fullscreen();
 
     var onDeviceReady = function() {
-      // app.ports.toJS.subscribe(function(model) {
-      //   window.localStorage.setItem('oneToDoApp', JSON.stringify(model));
-      // });
-      //
-      // if (window.localStorage.getItem('oneToDoApp')) {
-      //   app.ports.fromJS.send(JSON.parse(window.localStorage.getItem('oneToDoApp')));
-      // }
+      app.ports.setTodosInJS.subscribe(function(model) {
+        window.localStorage.setItem('oneToDoApp', JSON.stringify(model));
+      });
+
+      // otherwise init function will override data from localStorage
+      setTimeout(function() {
+        if (window.localStorage.getItem('oneToDoApp')) {
+          app.ports.getTodosFromJS.send(JSON.parse(window.localStorage.getItem('oneToDoApp')));
+        }
+      }, 0);
     };
 
     document.body.onload = onDeviceReady;
 
   </script>
-  <!-- <script src="http://192.168.1.105:1337/vorlon.js"></script> -->
 </body>
 </html>
